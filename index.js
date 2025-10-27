@@ -94,6 +94,13 @@ async function run() {
 
   // user realated Apis
    
+  app.get('/users', async(req, res)=> {
+    const result = await userCollestion.find().toArray()
+    res.send(result)
+  })
+
+
+
   app.post('/users', async(req,res)=> {
     const userProfile = req.body
     const result = await userCollestion.insertOne(userProfile)
@@ -101,6 +108,25 @@ async function run() {
   })
 
 
+  app.patch('/users', async(req,res)=> {
+    const {email, lastSignInTime} = req.body
+    const filter = {email:email}
+    const updatedDoc = {
+      $set: {
+        lastSignInTime:lastSignInTime
+      }
+   }
+   const result = await userCollestion.updateOne(filter, updatedDoc)
+   res.send(result)
+  })
+
+  app.delete('/users/:id', async(req,res)=>{
+    const id = req.params.id
+   const query = {_id : new ObjectId(id)}
+   const result = await userCollestion.deleteOne(query)
+   res.send(result)
+
+  })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
